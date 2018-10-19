@@ -36,5 +36,15 @@
         <p>{{text}}</p>
         {{ navbar() }}
     </div>
+    {% if _scrape_errors %}
+    <div class="errors">
+        <span>Scrape Errors:</span>
+        <ul class="scrape_errors">
+        {% for k, v in _scrape_errors.items() %}
+            <li><code>{{k}}</code>: <code>{{v}}</code></li>
+        {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
 </body>
 </html>
