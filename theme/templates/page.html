@@ -33,7 +33,15 @@
         <h1>{{title}}</h1>
         {% endif %}
         {{ navbar() }}
+
+        {% if comic_url %}
+        <a href="{{comic_url}}">
+        {% endif %}
         <img src="img/{{img_fname}}" />
+        {% if comic_url %}
+        </a>
+        {% endif %}
+
         <p>{{text}}</p>
         {{ navbar() }}
     </div>
