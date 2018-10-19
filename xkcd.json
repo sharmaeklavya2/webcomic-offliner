@@ -1,0 +1,49 @@
+{
+    "genesis": "https://xkcd.com/1/",
+    "url": {
+        "id": {
+            "component": "path",
+            "index": 0
+        }
+    },
+    "download": {
+        "url": "{img_url}",
+        "fpath": "img/{img_fname}"
+    },
+    "crawl": ["prev", "next"],
+    "document": {
+        "prev": {
+            "css": "a[rel~=\"prev\"]",
+            "attr": "href"
+        },
+        "next": {
+            "css": "a[rel~=\"next\"]",
+            "attr": "href"
+        },
+        "title": {
+            "css": "#ctitle",
+            "attr": null
+        },
+        "img_url": {
+            "css": "#comic > img, #comic > a > img",
+            "attr": "src"
+        },
+        "img_fname": {
+            "css": "#comic > img, #comic > a > img",
+            "attr": "src",
+            "url": {
+                "component": "path",
+                "index": 1
+            }
+        },
+        "comic_url": {
+            "css": "#comic > a",
+            "attr": "href",
+            "validate": false
+        },
+        "text": {
+            "css": "#comic > img, #comic > a > img",
+            "attr": "title"
+        }
+    }
+}

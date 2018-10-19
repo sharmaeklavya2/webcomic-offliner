@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    {% if title %}
+    <title>{{title}}</title>
+    {% endif %}
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+{% macro navbutton(edge, text) %}
+    {% if _adj[edge] %}
+    <a rel="{{edge}}" class="navbutton" href="{{_adj[edge]}}.html">{{text}}</a>
+    {% else %}
+    <div class="navbutton disabled">{{text}}</div>
+    {% endif %}
+{% endmacro %}
+{% macro navbar() %}
+<div class="navbar">
+    {{ navbutton('prev', '&lt;') }}
+    {{ navbutton('next', '&gt;') }}
+</div>
+{% endmacro %}
+
+<body>
+    <div class="header">
+        <a class="headeritem" href="index.html">Index</a>
+    </div>
+    <div class="main">
+        {% if title %}
+        <h1>{{title}}</h1>
+        {% endif %}
+        {{ navbar() }}
+        <img src="img/{{img_fname}}" />
+        <p>{{text}}</p>
+        {{ navbar() }}
+    </div>
+</body>
+</html>

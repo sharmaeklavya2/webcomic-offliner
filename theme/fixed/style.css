@@ -1,0 +1,55 @@
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+img {
+    max-width: 100%;
+}
+
+.header {
+    display: flex;
+    width: 100%;
+}
+
+.headeritem {
+    text-align: center;
+    flex: 1;
+    text-decoration: none;
+    color: white;
+    background-color: #008CBA;
+    font-size: 1.5em;
+    padding: 0.1em 1em;
+}
+
+.navbar {
+    display: flex;
+    width: calc(100% + 0.5em);
+    /* increase navbar size because navbutton has extra margin */
+    margin-bottom: 0.5em;
+}
+
+.navbutton {
+    text-align: center;
+    flex: 1;
+    text-decoration: none;
+    color: white;
+    background-color: #008CBA;
+    border-radius: 0.1em;
+    padding: 0.1em 1em;
+    font-size: 1.5em;
+    margin-left: 0.166666667em;  /* 0.25 / 1.5 */
+    margin-right: 0.166666667em;
+}
+
+.navbutton.disabled {
+    opacity: 0.5;
+}

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="style.css" />
+    {% if title %}
+    <title>{{title}}</title>
+    {% endif %}
+    <style>
+html, body {
+    margin: 0;
+    padding: 0;
+}
+ul {
+    margin: 0.5em;
+}
+li {
+    margin: 0.5em;
+}
+a {
+    text-decoration: none;
+}
+a:hover {
+    opacity: 0.8;
+}
+</style>
+</head>
+<body>
+    {% if title %}
+    <h1>{{title}}</h1>
+    {% endif %}
+    {% if info_list %}
+    <ul>
+        {% for info in info_list %}
+        <li><a href="{{info.id}}.html">{{info.id}}: {{info.title}}</a></li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+</body>
+</html>
