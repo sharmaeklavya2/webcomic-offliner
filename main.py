@@ -52,7 +52,7 @@ def check_path_belongs(fpath, parent_path):
 def download_resources(url, config, info, out_dir, fetcher=None):
     if isinstance(config, Sequence):
         for subconfig in config:
-            download_resources(url, subconfig, info, out_dir, fetcher=None)
+            download_resources(url, subconfig, info, out_dir, fetcher)
     else:
         info2 = {k: v for k, v in info.items() if v is not None}
         try:
