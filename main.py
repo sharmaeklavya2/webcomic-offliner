@@ -241,7 +241,7 @@ def main():
     render_count = 0
 
     try:
-        while pending_urls and (args.max_pages != sno+1):
+        while pending_urls and (args.max_pages != 0):
             url = pending_urls.pop()
             id = url_to_id(url, config)
             if args.explore_old:
@@ -251,6 +251,9 @@ def main():
             else:
                 if id_exists(id, args.out_dir, config):
                     continue
+
+            if args.max_pages is not None:
+                args.max_pages -= 1
 
             if not status_path_exists:
                 with open(status_path, 'w') as fobj:
