@@ -34,6 +34,7 @@
         {% endif %}
         {{ navbar() }}
 
+        {% if img_fname %}
         {% if comic_url %}
         <a href="{{comic_url}}">
         {% endif %}
@@ -41,8 +42,11 @@
         {% if comic_url %}
         </a>
         {% endif %}
+        {% endif %}
 
+        {% if text %}
         <p>{{text}}</p>
+        {% endif %}
         {{ navbar() }}
     </div>
     {% if _scrape_errors %}
