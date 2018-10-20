@@ -18,10 +18,13 @@
     <div class="navbutton disabled">{{text}}</div>
     {% endif %}
 {% endmacro %}
+
 {% macro navbar() %}
 <div class="navbar">
+    <a rel="first" class="navbutton" href="_first.html">&lt;&lt;</a>
     {{ navbutton('prev', '&lt;') }}
     {{ navbutton('next', '&gt;') }}
+    <a rel="last" class="navbutton" href="_last.html">&gt;&gt;</a>
 </div>
 {% endmacro %}
 

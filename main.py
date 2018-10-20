@@ -159,7 +159,7 @@ def main():
 
     parser.add_argument('--index-order', default='sno', help='key for ordering pages for index')
     parser.add_argument('--no-index', dest='create_index', action='store_false', default=True,
-        help='do not generate an index file')
+        help='do not generate index files')
     parser.add_argument('--no-copy-fixed', dest='copy_fixed', action='store_false', default=True,
         help='do not copy fixed files from theme to generated site')
     parser.add_argument('--skip-downloads', dest='download', action='store_false', default=True,
@@ -302,9 +302,7 @@ def main():
 
         if args.theme is not None and args.create_index:
             found_index = theme.create_index(args.theme, args.out_dir, order=args.index_order)
-            if not found_index:
-                print('index.html was not found', file=sys.stderr)
-            else:
+            if found_index:
                 print('Added index')
     except KeyboardInterrupt as e:
         pass

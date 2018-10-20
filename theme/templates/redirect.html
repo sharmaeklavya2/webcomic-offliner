@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Redirecting</title>
+    {% if id %}
+    <script>window.location.replace("{{id}}.html");</script>
+    {% endif %}
+</head>
+<body>
+    <p>This is a redirection page.</p>
+</body>
+</html>

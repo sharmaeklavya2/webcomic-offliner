@@ -21,20 +21,18 @@ def copy(source, dest):
 
 
 def get_template(theme_dir, fname):
-    'Returns whether template was found'
     template_path = pjoin(theme_dir, 'templates', fname)
     try:
         with open(template_path) as fobj:
             return jinja2.Template(fobj.read())
     except FileNotFoundError:
-        print(template_path + ' was not found')
+        print(template_path + ' was not found.', file=sys.stderr)
         return None
 
 
 def create_index(theme_dir, out_dir, order=DEFAULT_ORDER):
-    index_template = get_template(theme_dir, 'index.html')
-    if index_template is None:
-        return False
+    'Create index.html and other related files'
+    result = True
 
     info_dir = pjoin(out_dir, 'info')
     info_list = []
@@ -48,11 +46,26 @@ def create_index(theme_dir, out_dir, order=DEFAULT_ORDER):
     if order is not None:
         info_list.sort(key=(lambda info: info[order]))
 
-    page = index_template.render({'info_list': info_list})
     os.makedirs(pjoin(out_dir, 'site'), exist_ok=True)
-    with open(pjoin(out_dir, 'site', 'index.html'), 'w') as fobj:
-        fobj.write(page)
-    return True
+
+    index_template = get_template(theme_dir, 'index.html')
+    if index_template is None:
+        result = False
+    else:
+        page = index_template.render(info_list=info_list)
+        with open(pjoin(out_dir, 'site', 'index.html'), 'w') as fobj:
+            fobj.write(page)
+
+    redirect_template = get_template(theme_dir, 'redirect.html')
+    if redirect_template is None:
+        result = False
+    else:
+        for name, index in [('first', 0), ('last', -1)]:
+            page = redirect_template.render(id=info_list[index]['id'])
+            with open(pjoin(out_dir, 'site', '_{}.html'.format(name)), 'w') as fobj:
+                fobj.write(page)
+
+    return result
 
 
 def main():
@@ -65,9 +78,7 @@ def main():
 
     copy(pjoin(args.theme, 'fixed'), pjoin(args.out_dir, 'site'))
     found_index = create_index(args.theme, args.out_dir, order=args.order)
-    if not found_index:
-        print('index.html was not found')
-    else:
+    if found_index:
         print('created index')
 
 
