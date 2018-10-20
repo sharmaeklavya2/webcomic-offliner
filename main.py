@@ -85,7 +85,7 @@ def download_resources(url, config, info, out_dir, fetcher=None):
                 fobj.write(response.data)
 
 
-def fetch_and_scrape(url, config, out_dir=None, fetcher=None, download=True, indent=4, info=None):
+def fetch_and_scrape(url, config, out_dir=None, fetcher=None, download=True, info=None):
     if info is None:
         info = OrderedDict()
     info['_url'] = url
@@ -122,11 +122,6 @@ def fetch_and_scrape(url, config, out_dir=None, fetcher=None, download=True, ind
     # download resources
     if download and out_dir is not None and 'download' in config:
         download_resources(url, config['download'], info, out_dir, fetcher)
-
-    # save info
-    if out_dir is not None:
-        with open(info_path, 'w') as fobj:
-            json.dump(info, fobj, indent=indent)
 
     return info
 
@@ -275,10 +270,7 @@ def main():
             else:
                 edges = config['crawl']
             for e in edges:
-                try:
-                    url2 = info[e]
-                except KeyError:
-                    print('edge not found:', info, file=sys.stderr)
+                url2 = info.get(e)
                 if url2 is None or url2 in empty_urls:
                     continue
                 id2 = url_to_id(url2, config)
@@ -292,6 +284,13 @@ def main():
                     pending_urls.append(url2)
 
             info['_adj'] = adj
+
+            # save info
+            info_path = pjoin(args.out_dir, 'info', id + '.json')
+            if args.out_dir is not None:
+                with open(info_path, 'w') as fobj:
+                    json.dump(info, fobj, indent=4)
+
             if page_template is not None:
                 output = page_template.render(info)
                 outpath = pjoin(args.out_dir, 'site', info['id'] + '.html')
