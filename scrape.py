@@ -12,11 +12,12 @@ class ScrapeError(ValueError):
     'Raised when info cannot be generated from a config'
 
 
-SCRAPE_ERR_FP = sys.stderr
+SCRAPE_ERR_FPS = []
 
 
 def scrape_warn(url, key, message):
-    print('{}:\t{}:\t{}'.format(url, key, message), file=SCRAPE_ERR_FP)
+    for fp in SCRAPE_ERR_FPS:
+        print('{}:\t{}:\t{}'.format(url, key, message), file=fp)
 
 
 def validate_text(url, text, config, key):

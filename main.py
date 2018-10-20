@@ -152,9 +152,8 @@ def main():
         help='soft: purge last info and generated webpage; hard: purge last info, generated webpage and raw webpage')
     parser.add_argument('--reset', action='store_true', default=False,
         help='reset progress (deletes status.json and sets --explore-old)')
-    parser.add_argument('--quiet', action='store_true', default=False,
-        help='do not print messages for fetching files')
-    parser.add_argument('--errfile', type=argparse.FileType('w'))
+    parser.add_argument('--verbosity', type=int, default=2,
+        help='1: print error messages, 2: print fetch messages, 3: print sno')
     parser.add_argument('--explore-old', action='store_true', default=False,
         help='Explore old info files')
 
@@ -181,8 +180,10 @@ def main():
     if args.index_order == 'sno':
         args.index_order = '_sno'
 
-    if args.errfile is not None:
-        scrape.SCRAPE_ERR_FP = args.errfile
+    errfile_path = pjoin(args.out_dir, 'error.log')
+    scrape.SCRAPE_ERR_FPS.append(open(errfile_path, 'a'))
+    if args.verbosity > 0:
+        scrape.SCRAPE_ERR_FPS.append(sys.stderr)
 
     # Load config
     config_path = pjoin(args.out_dir, 'config.json')
@@ -199,7 +200,7 @@ def main():
     else:
         page_template = None
 
-    fetcher = TimedFetcher(args.delay, args.quiet)
+    fetcher = TimedFetcher(args.delay, args.verbosity <= 1)
 
     # Load and save status
     status_path = pjoin(args.out_dir, 'status.json')
@@ -254,6 +255,8 @@ def main():
 
             if args.max_pages is not None:
                 args.max_pages -= 1
+            if args.verbosity > 2:
+                print('sno:', sno)
 
             if not status_path_exists:
                 with open(status_path, 'w') as fobj:
@@ -306,8 +309,7 @@ def main():
     except KeyboardInterrupt as e:
         pass
     finally:
-        if args.errfile is not None:
-            args.errfile.close()
+        scrape.SCRAPE_ERR_FPS[0].close()
 
         print()
         print('Downloaded {} webpages/resources'.format(fetcher.count))
