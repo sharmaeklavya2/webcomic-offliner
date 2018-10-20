@@ -2,12 +2,17 @@ import sys
 
 import time
 from urllib.request import urlopen, Request
+from urllib.parse import quote
 
 
 class Response:
     def __init__(self, data, url=None):
         self.data = data
         self.url = url
+
+
+def clean_url(url):
+    return quote(url, safe="/:=&?#+!$,;'@()*[]")
 
 
 class TimedFetcher:
@@ -43,6 +48,7 @@ class TimedFetcher:
     def fetch(self, url):
         self.sleep()
         self.log_before(url)
+        url = clean_url(url)
         request = Request(url=url, headers={'User-Agent': self.USER_AGENT})
         with urlopen(request) as fobj:
             data = fobj.read()
