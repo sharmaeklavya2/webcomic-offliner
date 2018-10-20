@@ -65,6 +65,15 @@ def create_index(theme_dir, out_dir, order=DEFAULT_ORDER):
             with open(pjoin(out_dir, 'site', '_{}.html'.format(name)), 'w') as fobj:
                 fobj.write(page)
 
+    random_template = get_template(theme_dir, 'random.html')
+    if random_template is None:
+        result = False
+    else:
+        id_list = [info['id'] for info in info_list]
+        page = random_template.render(id_list=json.dumps(id_list))
+        with open(pjoin(out_dir, 'site', '_random.html'.format(name)), 'w') as fobj:
+            fobj.write(page)
+
     return result
 
 

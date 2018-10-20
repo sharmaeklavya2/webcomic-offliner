@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Redirecting</title>
+{% if id_list %}
+    <script>
+var l = {{id_list}};
+var i = Math.floor(Math.random() * l.length);
+if(i == l.length) {i = 0;}
+window.location.replace(l[i] + ".html");
+    </script>
+{% endif %}
+</head>
+<body>
+    <p>This is a redirection page.</p>
+</body>
+</html>
