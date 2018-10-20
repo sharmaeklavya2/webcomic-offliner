@@ -11,9 +11,9 @@
     <link rel="stylesheet" href="style.css" />
 </head>
 
-{% macro navbutton(edge, text) %}
-    {% if _adj[edge] %}
-    <a rel="{{edge}}" class="navbutton" href="{{_adj[edge]}}.html">{{text}}</a>
+{% macro navbutton(condition, rel, href, text) %}
+    {% if _adj[condition] %}
+    <a rel="{{rel}}" class="navbutton" href="{{href}}.html">{{text}}</a>
     {% else %}
     <div class="navbutton disabled">{{text}}</div>
     {% endif %}
@@ -21,11 +21,11 @@
 
 {% macro navbar() %}
 <div class="navbar">
-    <a rel="first" class="navbutton" href="_first.html">&lt;&lt;</a>
-    {{ navbutton('prev', '&lt;') }}
+    {{ navbutton('prev', 'first', '_first', '&lt;&lt;') }}
+    {{ navbutton('prev', 'prev', _adj.prev, '&lt;') }}
     <a class="navbutton" id="random_button" href="_random.html">?</a>
-    {{ navbutton('next', '&gt;') }}
-    <a rel="last" class="navbutton" href="_last.html">&gt;&gt;</a>
+    {{ navbutton('next', 'next', _adj.next, '&gt;') }}
+    {{ navbutton('next', 'last', '_last', '&gt;&gt;') }}
 </div>
 {% endmacro %}
 

@@ -36,12 +36,33 @@ def create_index(theme_dir, out_dir, order=DEFAULT_ORDER):
 
     info_dir = pjoin(out_dir, 'info')
     info_list = []
+    prev_sink_ids = []
+    next_sink_ids = []
     for fname in os.listdir(info_dir):
         if os.path.splitext(fname)[1] == '.json':
             info_path = pjoin(info_dir, fname)
             with open(info_path) as fobj:
                 info = json.load(fobj)
+            prev_id = info.get('_adj', {}).get('prev')
+            if prev_id is None:
+                prev_sink_ids.append(info['id'])
+            next_id = info.get('_adj', {}).get('next')
+            if next_id is None:
+                next_sink_ids.append(info['id'])
             info_list.append(info)
+
+    errors = []
+    if len(prev_sink_ids) == 0:
+        errors.append('all comics have a prev')
+    elif len(prev_sink_ids) > 1:
+        errors.append('{} comics have a prev missing'.format(str(prev_sink_ids)))
+    if len(next_sink_ids) == 0:
+        errors.append('all comics have a next')
+    elif len(next_sink_ids) > 1:
+        errors.append('{} comics have a next missing'.format(str(next_sink_ids)))
+
+    prev_sink = prev_sink_ids[0] if prev_sink_ids else None
+    next_sink = next_sink_ids[0] if next_sink_ids else None
 
     if order is not None:
         info_list.sort(key=(lambda info: info[order]))
@@ -52,7 +73,7 @@ def create_index(theme_dir, out_dir, order=DEFAULT_ORDER):
     if index_template is None:
         result = False
     else:
-        page = index_template.render(info_list=info_list)
+        page = index_template.render(info_list=info_list, errors=errors)
         with open(pjoin(out_dir, 'site', 'index.html'), 'w') as fobj:
             fobj.write(page)
 
@@ -60,10 +81,12 @@ def create_index(theme_dir, out_dir, order=DEFAULT_ORDER):
     if redirect_template is None:
         result = False
     else:
-        for name, index in [('first', 0), ('last', -1)]:
-            page = redirect_template.render(id=info_list[index]['id'])
-            with open(pjoin(out_dir, 'site', '_{}.html'.format(name)), 'w') as fobj:
-                fobj.write(page)
+        page = redirect_template.render(id=prev_sink)
+        with open(pjoin(out_dir, 'site', '_first.html'), 'w') as fobj:
+            fobj.write(page)
+        page = redirect_template.render(id=next_sink)
+        with open(pjoin(out_dir, 'site', '_last.html'), 'w') as fobj:
+            fobj.write(page)
 
     random_template = get_template(theme_dir, 'random.html')
     if random_template is None:
@@ -71,7 +94,7 @@ def create_index(theme_dir, out_dir, order=DEFAULT_ORDER):
     else:
         id_list = [info['id'] for info in info_list]
         page = random_template.render(id_list=json.dumps(id_list))
-        with open(pjoin(out_dir, 'site', '_random.html'.format(name)), 'w') as fobj:
+        with open(pjoin(out_dir, 'site', '_random.html'), 'w') as fobj:
             fobj.write(page)
 
     return result
