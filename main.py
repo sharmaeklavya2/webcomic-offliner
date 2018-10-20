@@ -119,6 +119,12 @@ def fetch_and_scrape(url, config, out_dir=None, fetcher=None, download=True, inf
         document = etree.HTML(response.data)
         scrape.apply_document_config(url, document, config['document'], info)
 
+    # save info
+    if out_dir is not None:
+        info_path = pjoin(out_dir, 'info', id + '.json')
+        with open(info_path, 'w') as fobj:
+            json.dump(info, fobj, indent=4)
+
     # download resources
     if download and out_dir is not None and 'download' in config:
         download_resources(url, config['download'], info, out_dir, fetcher)
@@ -287,9 +293,8 @@ def main():
 
             # save info
             info_path = pjoin(args.out_dir, 'info', id + '.json')
-            if args.out_dir is not None:
-                with open(info_path, 'w') as fobj:
-                    json.dump(info, fobj, indent=4)
+            with open(info_path, 'w') as fobj:
+                json.dump(info, fobj, indent=4)
 
             if page_template is not None:
                 output = page_template.render(info)
