@@ -24,12 +24,28 @@ a {
 a:hover {
     opacity: 0.8;
 }
+.errors {
+    background-color: #f2dede;
+}
+
 </style>
 </head>
 <body>
     {% if title %}
     <h1>{{title}}</h1>
     {% endif %}
+
+    {% if errors %}
+    <div class="errors">
+        <p>Errors:</p>
+        <ul>
+            {% for error in errors %}
+            <li><code>{{error}}</code></li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
     {% if info_list %}
     <ul>
         {% for info in info_list %}
