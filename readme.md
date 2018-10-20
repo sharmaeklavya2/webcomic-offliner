@@ -1,4 +1,4 @@
-# Webcomic Offline
+# Webcomic Offliner
 
 This program downloads a webcomic website for offline viewing.
 It also removes unnecessary clutter (like headers, footers, etc.).
