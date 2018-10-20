@@ -36,20 +36,24 @@ def create_index(theme_dir, out_dir, order=DEFAULT_ORDER):
 
     info_dir = pjoin(out_dir, 'info')
     info_list = []
-    prev_sink_ids = []
-    next_sink_ids = []
     for fname in os.listdir(info_dir):
         if os.path.splitext(fname)[1] == '.json':
             info_path = pjoin(info_dir, fname)
             with open(info_path) as fobj:
                 info = json.load(fobj)
-            prev_id = info.get('_adj', {}).get('prev')
-            if prev_id is None:
-                prev_sink_ids.append(info['id'])
-            next_id = info.get('_adj', {}).get('next')
-            if next_id is None:
-                next_sink_ids.append(info['id'])
             info_list.append(info)
+
+    id_set = {info['id'] for info in info_list}
+
+    prev_sink_ids = []
+    next_sink_ids = []
+    for info in info_list:
+        prev_id = info.get('_adj', {}).get('prev')
+        if prev_id is None or prev_id not in id_set:
+            prev_sink_ids.append(info['id'])
+        next_id = info.get('_adj', {}).get('next')
+        if next_id is None or next_id not in id_set:
+            next_sink_ids.append(info['id'])
 
     errors = []
     if len(prev_sink_ids) == 0:
