@@ -51,6 +51,11 @@
         {% if text %}
         <p>{{text}}</p>
         {% endif %}
+
+        {% if img2_fname %}
+        <img src="img/{{img2_fname}}" />
+        {% endif %}
+
         {{ navbar() }}
     </div>
     {% if _scrape_errors %}
