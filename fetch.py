@@ -1,7 +1,7 @@
 import sys
 
 import time
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
 
 
 class Response:
@@ -13,6 +13,7 @@ class Response:
 class TimedFetcher:
 
     DEFAULT_DELAY = 1
+    USER_AGENT = 'webcomic-offliner'
 
     def __init__(self, delay=None, quiet=False):
         self.last_time = None
@@ -42,7 +43,8 @@ class TimedFetcher:
     def fetch(self, url):
         self.sleep()
         self.log_before(url)
-        with urlopen(url) as fobj:
+        request = Request(url=url, headers={'User-Agent': self.USER_AGENT})
+        with urlopen(request) as fobj:
             data = fobj.read()
             url2 = fobj.geturl()
             self.count += 1
