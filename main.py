@@ -13,10 +13,8 @@ from collections import OrderedDict
 from collections.abc import Sequence
 
 import shutil
-import time
 from lxml import etree
 from urllib.parse import urljoin
-import jinja2
 
 import scrape
 from scrape import ScrapeError, ConfigError
@@ -136,6 +134,7 @@ def id_exists(id, out_dir, config):
     fpath = pjoin(out_dir, 'info', id + '.json')
     return os.path.isfile(fpath)
 
+
 def url_to_id(url, config):
     return scrape.apply_url_config(url, config['url']['id'])
 
@@ -150,7 +149,8 @@ def main():
     parser.add_argument('--delay', type=float, default=1,
         help='time in seconds for which to wait between 2 http requests')
     parser.add_argument('--chip', choices=('soft', 'hard'),
-        help='soft: purge last info and generated webpage; hard: purge last info, generated webpage and raw webpage')
+        help='soft: purge last info and generated webpage;'
+            ' hard: purge last info, generated webpage and raw webpage')
     parser.add_argument('--reset', action='store_true', default=False,
         help='reset progress (deletes status.json and sets --explore-old)')
     parser.add_argument('--verbosity', type=int, default=2,
@@ -308,7 +308,7 @@ def main():
             found_index = theme.create_index(args.theme, args.out_dir, order=args.index_order)
             if found_index:
                 print('Added index')
-    except KeyboardInterrupt as e:
+    except KeyboardInterrupt:
         pass
     finally:
         scrape.SCRAPE_ERR_FPS[0].close()

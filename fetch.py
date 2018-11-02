@@ -1,5 +1,3 @@
-import sys
-
 import time
 from urllib.request import urlopen, Request
 from urllib.parse import quote
@@ -34,7 +32,7 @@ class TimedFetcher:
             print('Fetching:', url)
 
     def log_after(self, url, data):
-        #print('Fetched {} bytes'.format(len(data)))
+        # print('Fetched {} bytes'.format(len(data)))
         pass
 
     def sleep(self):
@@ -42,7 +40,7 @@ class TimedFetcher:
         if self.last_time is not None:
             sleep_time = self.last_time + self.delay - current_time
             if sleep_time > 0:
-                #print('sleeping for {:.6f} seconds'.format(sleep_time))
+                # print('sleeping for {:.6f} seconds'.format(sleep_time))
                 time.sleep(sleep_time)
 
     def fetch(self, url):

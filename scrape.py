@@ -1,4 +1,3 @@
-import sys
 from collections import OrderedDict
 from collections.abc import Sequence, Mapping
 
@@ -7,6 +6,7 @@ from urllib.parse import urlparse
 
 class ConfigError(ValueError):
     'Raised when the config is incorrect'
+
 
 class ScrapeError(ValueError):
     'Raised when info cannot be generated from a config'
@@ -22,9 +22,9 @@ def scrape_warn(url, key, message):
 
 def validate_text(url, text, config, key):
     err_msg = None
-    if config is None or config == False:
+    if config is None or config is False:
         return
-    elif config == True:
+    elif config is True:
         if not text:
             err_msg = 'not found'
             scrape_warn(url, key, err_msg)
@@ -43,7 +43,7 @@ def validate_text(url, text, config, key):
 def apply_url_config(url, config):
     try:
         part_name = config['component']
-    except KeyError as e:
+    except KeyError:
         raise ConfigError("url subconfig does not contain 'component'")
     text = None
     url_parts = urlparse(url)
