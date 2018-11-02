@@ -111,7 +111,7 @@ Some command-line arguments for forcing download/scrape/render:
 The context for the template is the info file.
 
 You might require additional resources like stylesheets, JavaScript files or images.
-These can be added to `theme/fixed/`. They will be copied to `out_dir/site`.
+These can be added to `theme/static/`. They will be copied to `out_dir/site`.
 
 You can also add an index page at `out_dir/index.html`.
 The template for it should be at `theme/templates/index.html`.

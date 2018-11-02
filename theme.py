@@ -112,7 +112,7 @@ def main():
     parser.add_argument('--order', default=DEFAULT_ORDER)
     args = parser.parse_args()
 
-    copy(pjoin(args.theme, 'fixed'), pjoin(args.out_dir, 'site'))
+    copy(pjoin(args.theme, 'static'), pjoin(args.out_dir, 'site'))
     found_index = create_index(args.theme, args.out_dir, order=args.order)
     if found_index:
         print('created index')

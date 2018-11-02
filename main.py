@@ -161,8 +161,8 @@ def main():
     parser.add_argument('--index-order', default='sno', help='key for ordering pages for index')
     parser.add_argument('--no-index', dest='create_index', action='store_false', default=True,
         help='do not generate index files')
-    parser.add_argument('--no-copy-fixed', dest='copy_fixed', action='store_false', default=True,
-        help='do not copy fixed files from theme to generated site')
+    parser.add_argument('--no-copy-static', dest='copy_static', action='store_false', default=True,
+        help='do not copy static files from theme to generated site')
     parser.add_argument('--skip-downloads', dest='download', action='store_false', default=True,
         help='do not download additional content (like images)')
     parser.add_argument('--force-render', action='store_true', default=False,
@@ -193,11 +193,11 @@ def main():
     os.makedirs(pjoin(args.out_dir, 'info'), exist_ok=True)
     os.makedirs(pjoin(args.out_dir, 'raw'), exist_ok=True)
 
-    # load template and copy fixed files
+    # load template and copy static files
     if args.theme is not None:
         page_template = theme.get_template(args.theme, 'page.html')
-        if args.copy_fixed:
-            theme.copy(pjoin(args.theme, 'fixed'), pjoin(args.out_dir, 'site'))
+        if args.copy_static:
+            theme.copy(pjoin(args.theme, 'static'), pjoin(args.out_dir, 'site'))
     else:
         page_template = None
 
