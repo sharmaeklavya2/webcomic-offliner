@@ -19,7 +19,7 @@ from urllib.parse import urljoin
 import jinja2
 
 import scrape
-from scrape import ScrapeError
+from scrape import ScrapeError, ConfigError
 from fetch import Response, TimedFetcher
 import theme
 
