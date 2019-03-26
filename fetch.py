@@ -19,20 +19,27 @@ def clean_url(url):
 class TimedFetcher:
 
     DEFAULT_DELAY = 1
+    DEFAULT_RETRY_DELAY = 5
+    DEFAULT_RETRIES = 2
     USER_AGENT = 'webcomic-offliner'
 
-    def __init__(self, delay=None):
+    def __init__(self, delay=None, retry_delay=None, retries=None):
         self.last_time = None
         self.delay = TimedFetcher.DEFAULT_DELAY if delay is None else delay
+        self.retry_delay = TimedFetcher.DEFAULT_RETRY_DELAY if retry_delay is None else retry_delay
+        self.retries = TimedFetcher.DEFAULT_RETRIES if retries is None else retries
         self.count = 0
 
     def get_current_time(self):
         return time.perf_counter()
 
-    def log_before(self, url):
-        logger.info('Fetching: ' + url)
+    def log_before(self, url, retry):
+        if retry == 0:
+            logger.info('Fetching: ' + url)
+        else:
+            logger.info('Fetching (retry {}): {}'.format(retry, url))
 
-    def log_after(self, url, data):
+    def log_after(self, url, retry, data):
         # logger.debug('Fetched {} bytes'.format(len(data)))
         pass
 
@@ -46,13 +53,23 @@ class TimedFetcher:
 
     def fetch(self, url):
         self.sleep()
-        self.log_before(url)
         url = clean_url(url)
         request = Request(url=url, headers={'User-Agent': self.USER_AGENT})
-        with urlopen(request) as fobj:
-            data = fobj.read()
-            url2 = fobj.geturl()
+        for retry in range(self.retries + 1):
+            self.log_before(url, retry)
+            data, url2 = None, None
+            try:
+                with urlopen(request) as fobj:
+                    data = fobj.read()
+                    url2 = fobj.geturl()
+            except (OSError, IOError):
+                if retry == self.retries:
+                    raise
+                else:
+                    logger.exception('Fetch failed; retrying in {} seconds'.format(self.retry_delay))
+                    time.sleep(self.retry_delay)
+                    continue
             self.count += 1
-            self.log_after(url, data)
-        self.last_time = self.get_current_time()
-        return Response(data, url=url2)
+            self.log_after(url, data, retry)
+            self.last_time = self.get_current_time()
+            return Response(data, url=url2)
