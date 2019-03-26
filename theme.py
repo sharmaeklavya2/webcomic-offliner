@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 
-import sys
 import os
 from os.path import join as pjoin
+import logging
 
 import json
 import shutil
 import jinja2
 
 DEFAULT_ORDER = '_sno'
+logger = logging.getLogger('theme')
 
 
 def copy(source, dest):
@@ -26,7 +27,7 @@ def get_template(theme_dir, fname):
         with open(template_path) as fobj:
             return jinja2.Template(fobj.read())
     except FileNotFoundError:
-        print(template_path + ' was not found.', file=sys.stderr)
+        logger.error(template_path + ' was not found.')
         return None
 
 
@@ -115,7 +116,7 @@ def main():
     copy(pjoin(args.theme, 'static'), pjoin(args.out_dir, 'site'))
     found_index = create_index(args.theme, args.out_dir, order=args.order)
     if found_index:
-        print('created index')
+        logger.info('created index')
 
 
 if __name__ == '__main__':

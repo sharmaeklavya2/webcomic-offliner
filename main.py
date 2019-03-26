@@ -11,6 +11,8 @@ import argparse
 import json
 from collections import OrderedDict
 from collections.abc import Sequence
+import logging
+import logging.config
 
 import shutil
 from lxml import etree
@@ -20,6 +22,26 @@ import scrape
 from scrape import ScrapeError, ConfigError
 from fetch import Response, TimedFetcher
 import theme
+
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+logger = logging.getLogger()
+
+
+def configure_logging(out_dir, verbosity):
+    with open(pjoin(BASE_DIR, 'logging_config.json')) as fp:
+        config = json.load(fp)
+    os.makedirs(out_dir, exist_ok=True)
+    info_file = pjoin(out_dir, 'info.log')
+    config['handlers']['info_file']['filename'] = info_file
+    error_file = pjoin(out_dir, 'error.log')
+    config['handlers']['error_file']['filename'] = error_file
+    if verbosity <= 1:
+        logging.getLogger('fetch').setLevel(logging.WARNING)
+    elif verbosity >= 3:
+        config['root']['level'] = 'DEBUG'
+    logging.config.dictConfig(config)
+    logger.info('')
 
 
 def get_raw_data(url, id=None, out_dir=None, fetcher=None):
@@ -61,12 +83,14 @@ def download_resources(url, config, info, out_dir, fetcher=None):
         try:
             url2 = url_template.format(**info2)
         except KeyError as e:
-            scrape.scrape_warn(url, e.args[0], 'key not found for download url replacement')
+            logger.warning('{}:\t{}:\t{}'.format(url, e.args[0],
+                'key not found for download url replacement'))
             url2 = None
         try:
             fpath = fpath_template.format(**info2)
         except KeyError as e:
-            scrape.scrape_warn(url, e.args[0], 'key not found for download fpath replacement')
+            logger.warning('{}:\t{}:\t{}'.format(url, e.args[0],
+                'key not found for download fpath replacement'))
             fpath = None
         if fpath is None or url2 is None:
             return
@@ -173,6 +197,8 @@ def main():
     parser.add_argument('--genesis-url', help='override genesis url in config')
     args = parser.parse_args()
 
+    configure_logging(args.out_dir, args.verbosity)
+
     if args.config:
         shutil.copyfile(args.config, pjoin(args.out_dir, 'config.json'))
 
@@ -180,11 +206,6 @@ def main():
         args.index_order = None
     if args.index_order == 'sno':
         args.index_order = '_sno'
-
-    errfile_path = pjoin(args.out_dir, 'error.log')
-    scrape.SCRAPE_ERR_FPS.append(open(errfile_path, 'a'))
-    if args.verbosity > 0:
-        scrape.SCRAPE_ERR_FPS.append(sys.stderr)
 
     # Load config
     config_path = pjoin(args.out_dir, 'config.json')
@@ -201,7 +222,7 @@ def main():
     else:
         page_template = None
 
-    fetcher = TimedFetcher(args.delay, args.verbosity <= 1)
+    fetcher = TimedFetcher(args.delay)
 
     # Load and save status
     status_path = pjoin(args.out_dir, 'status.json')
@@ -235,8 +256,8 @@ def main():
             except FileNotFoundError:
                 pass
 
-    print('Starting at url:', url)
-    print('Starting at sno:', sno)
+    logger.info('Starting at url: {}'.format(url))
+    logger.info('Starting at sno: {}'.format(sno))
     pending_urls = [url]
     if args.explore_old:
         seen_ids = set()
@@ -256,8 +277,7 @@ def main():
 
             if args.max_pages is not None:
                 args.max_pages -= 1
-            if args.verbosity > 2:
-                print('sno:', sno)
+            logger.debug('sno: {}'.format(sno))
 
             if not status_path_exists:
                 with open(status_path, 'w') as fobj:
@@ -303,20 +323,27 @@ def main():
                     with open(outpath, 'w') as fobj:
                         fobj.write(output)
                     render_count += 1
+    except KeyboardInterrupt:
+        pass
+    except Exception:
+        logger.exception('Caught exception while crawling and scraping')
+        return 1
+    finally:
+        print()
+        logger.info('Downloaded {} webpages/resources'.format(fetcher.count))
+        logger.info('Rendered {} pages'.format(render_count))
 
+    try:
         if args.theme is not None and args.create_index:
             found_index = theme.create_index(args.theme, args.out_dir, order=args.index_order)
             if found_index:
-                print('Added index')
-    except KeyboardInterrupt:
-        pass
-    finally:
-        scrape.SCRAPE_ERR_FPS[0].close()
+                logger.info('Added index')
+    except Exception:
+        logger.exception('Caught exception while creating index')
+        return 1
 
-        print()
-        print('Downloaded {} webpages/resources'.format(fetcher.count))
-        print('Rendered {} pages'.format(render_count))
+    return 0
 
 
 if __name__ == '__main__':
-    main()
+    sys.exit(main())

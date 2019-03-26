@@ -1,0 +1,31 @@
+{
+    "version": 1,
+    "disable_existing_loggers": false,
+    "formatters": {
+        "simple": {
+            "format": "%(asctime)s %(levelname)s %(name)s: %(message)s"
+        }
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "level": "DEBUG",
+            "formatter": "simple",
+            "stream": "ext://sys.stdout"
+        },
+        "info_file": {
+            "class": "logging.FileHandler",
+            "level": "DEBUG",
+            "formatter": "simple"
+        },
+        "error_file": {
+            "class": "logging.FileHandler",
+            "level": "WARNING",
+            "formatter": "simple"
+        }
+    },
+    "root": {
+        "level": "INFO",
+        "handlers": ["console", "info_file", "error_file"]
+    }
+}

@@ -1,7 +1,9 @@
 from collections import OrderedDict
 from collections.abc import Sequence, Mapping
-
 from urllib.parse import urlparse
+import logging
+
+logger = logging.getLogger('scrape')
 
 
 class ConfigError(ValueError):
@@ -12,22 +14,13 @@ class ScrapeError(ValueError):
     'Raised when info cannot be generated from a config'
 
 
-SCRAPE_ERR_FPS = []
-
-
-def scrape_warn(url, key, message):
-    for fp in SCRAPE_ERR_FPS:
-        print('{}:\t{}:\t{}'.format(url, key, message), file=fp)
-
-
 def validate_text(url, text, config, key):
     err_msg = None
     if config is None or config is False:
         return
     elif config is True:
         if not text:
-            err_msg = 'not found'
-            scrape_warn(url, key, err_msg)
+            logger.warning('{}:\t{}:\t{}'.format(url, key, 'not found'))
     elif isinstance(config, Sequence):
         err_msg = []
         for subconfig in config:
