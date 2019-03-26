@@ -12,7 +12,7 @@ html, body {
     margin: 0;
     padding: 0;
 }
-ul {
+ul, ol {
     margin: 0.5em;
 }
 li {
@@ -47,11 +47,11 @@ a:hover {
     {% endif %}
 
     {% if info_list %}
-    <ul>
+    <ol>
         {% for info in info_list %}
         <li><a href="{{info.id}}.html">{{info.id}}: {{info.title}}</a></li>
         {% endfor %}
-    </ul>
+    </ol>
     {% endif %}
 </body>
 </html>
