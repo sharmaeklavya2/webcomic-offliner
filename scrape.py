@@ -51,6 +51,8 @@ def apply_url_config(url, config):
                 pass
         else:
             text = path
+        if 'sep' in config:
+            text = text.strip('/').replace('/', config['sep'])
     # TODO: add other components
     return text
 
