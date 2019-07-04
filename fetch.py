@@ -1,6 +1,7 @@
 import time
 from urllib.request import urlopen, Request
 from urllib.parse import quote
+from http.client import HTTPException
 import logging
 
 logger = logging.getLogger('fetch')
@@ -62,7 +63,7 @@ class TimedFetcher:
                 with urlopen(request) as fobj:
                     data = fobj.read()
                     url2 = fobj.geturl()
-            except (OSError, IOError):
+            except (OSError, IOError, HTTPException):
                 if retry == self.retries:
                     raise
                 else:
