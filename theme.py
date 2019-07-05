@@ -38,7 +38,7 @@ def create_index(theme_dir, out_dir, order=DEFAULT_ORDER):
     info_dir = pjoin(out_dir, 'info')
     info_list = []
     for fname in os.listdir(info_dir):
-        if os.path.splitext(fname)[1] == '.json':
+        if fname.endswith('.json'):
             info_path = pjoin(info_dir, fname)
             with open(info_path) as fobj:
                 info = json.load(fobj)
