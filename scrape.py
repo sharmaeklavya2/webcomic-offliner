@@ -1,6 +1,6 @@
 from collections import OrderedDict
 from collections.abc import Sequence, Mapping
-from urllib.parse import urlparse
+from urllib.parse import urlparse, parse_qs
 import logging
 
 logger = logging.getLogger('scrape')
@@ -53,6 +53,16 @@ def apply_url_config(url, config):
             text = path
         if 'sep' in config:
             text = text.strip('/').replace('/', config['sep'])
+    elif part_name == 'query':
+        qs_dict = parse_qs(url_parts.query)
+        if 'key' in config:
+            key = config['key']
+            try:
+                text = qs_dict[key][0]
+            except (IndexError, KeyError, TypeError):
+                pass
+        else:
+            raise ConfigError("key is needed to retrieve data from url's querystring")
     # TODO: add other components
     return text
 

@@ -68,6 +68,8 @@ def create_index(theme_dir, out_dir, order=DEFAULT_ORDER):
 
     prev_sink = prev_sink_ids[0] if prev_sink_ids else None
     next_sink = next_sink_ids[0] if next_sink_ids else None
+    logger.info('prev_sink: ' + prev_sink)
+    logger.info('next_sink: ' + next_sink)
 
     if order is not None:
         info_list.sort(key=(lambda info: info[order]))
