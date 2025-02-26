@@ -215,12 +215,11 @@ def main():
     os.makedirs(pjoin(args.out_dir, 'raw'), exist_ok=True)
 
     # load template and copy static files
-    if args.theme is not None:
-        page_template = theme.get_template(args.theme, 'page.html')
-        if args.copy_static:
-            theme.copy(pjoin(args.theme, 'static'), pjoin(args.out_dir, 'site'))
-    else:
-        page_template = None
+    if args.theme is None:
+        args.theme = pjoin(BASE_DIR, 'theme')
+    page_template = theme.get_template(args.theme, 'page.html')
+    if args.copy_static:
+        theme.copy(pjoin(args.theme, 'static'), pjoin(args.out_dir, 'site'))
 
     fetcher = TimedFetcher(args.delay)
 
